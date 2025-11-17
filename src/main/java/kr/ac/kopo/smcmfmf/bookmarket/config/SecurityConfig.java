@@ -23,15 +23,15 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(); // 비밀번호를 암호화
     }
 
-/*    @Bean
-    public UserDetailsService users() {
-        UserDetails admin = User.builder()
-                .username("Admin") // 아이디
-                .password(passwordEncoder().encode("Admin1234")) // 비밀번호를 암호화
-                .roles("ADMIN") // 역할 정의
-                .build();
-        return new InMemoryUserDetailsManager(admin); // 사용자 정의
-    }*/
+//    @Bean
+//    public UserDetailsService users() {
+//        UserDetails admin = User.builder()
+//                .username("admin") // 아이디
+//                .password(passwordEncoder().encode("admin1234")) // 비밀번호를 암호화
+//                .roles("ADMIN") // 역할 정의
+//                .build();
+//        return new InMemoryUserDetailsManager(admin); // 사용자 정의
+//    }
     
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
