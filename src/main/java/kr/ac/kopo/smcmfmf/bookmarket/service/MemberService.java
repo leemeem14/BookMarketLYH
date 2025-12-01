@@ -1,7 +1,7 @@
 package kr.ac.kopo.smcmfmf.bookmarket.service;
 
-import jakarta.transaction.Transactional;
 import kr.ac.kopo.smcmfmf.bookmarket.domain.Member;
+import jakarta.transaction.Transactional;
 import kr.ac.kopo.smcmfmf.bookmarket.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -16,38 +16,37 @@ import org.springframework.stereotype.Service;
 public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
 
-//회원 정보 저장
-    public Member saveMember(Member member) {
+    //    회원 정보 저장
+    public kr.ac.kopo.smcmfmf.bookmarket.domain.Member saveMember(kr.ac.kopo.smcmfmf.bookmarket.domain.Member member) {
         validateDuplicateMember(member);
         return memberRepository.save(member);
     }
-// 특정 멤버 ID를 가진 member entity만 반환
-    public Member getMemberByMemberId(String memberId) {
+
+    //    특정 memberId를 가진 Member Entity만 반환
+    public kr.ac.kopo.smcmfmf.bookmarket.domain.Member getMemberByMemberId(String memberId) {
         return memberRepository.findByMemberId(memberId);
     }
 
-// 회원정보 삭제
-
-    public void deleteMember(String memberId) {
-    Member member = memberRepository.findByMemberId(memberId);
-    memberRepository.deleteById(member.getNum());
+    //    Member Entity (회원 정보) 삭제
+    public  void deleteMember(String memberId) {
+        kr.ac.kopo.smcmfmf.bookmarket.domain.Member member = memberRepository.findByMemberId(memberId);
+        memberRepository.deleteById(member.getNum());
     }
 
-
-    private void validateDuplicateMember(Member member) {
-        Member findMember = memberRepository.findByMemberId(member.getMemberId());
-        if (findMember != null){
-            throw new IllegalStateException("duplicated member found");
+    private void validateDuplicateMember(kr.ac.kopo.smcmfmf.bookmarket.domain.Member member) {
+        kr.ac.kopo.smcmfmf.bookmarket.domain.Member findMember = memberRepository.findByMemberId(member.getMemberId());
+        if (findMember != null) {
+            throw new IllegalStateException("Duplicate member found");
         }
     }
 
     @Override
     public UserDetails loadUserByUsername(String memberId) throws UsernameNotFoundException {
         Member member = memberRepository.findByMemberId(memberId);
-        if (member != null) {
-            throw new UsernameNotFoundException("user not found");
+        if (member == null) {
+            throw new UsernameNotFoundException("User not found");
         }
-        UserDetails userDetails =User.builder()
+        UserDetails userDetails = User.builder()
                 .username(member.getMemberId())
                 .password(member.getPassword())
                 .roles(member.getRole().toString())

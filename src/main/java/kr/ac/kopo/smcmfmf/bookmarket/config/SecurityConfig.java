@@ -43,7 +43,7 @@ public class SecurityConfig{
 
                 // 특정 URL에 대한 권한 설정.
                 .authorizeHttpRequests(
-                        authorize -> authorize
+                        authorizeRequests -> authorizeRequests
                                 .requestMatchers("/books/add").hasRole("ADMIN" )
                                 .requestMatchers("/order/list").hasRole("ADMIN" )
                                 .anyRequest().permitAll()
