@@ -38,6 +38,10 @@ public class BookController {
     @Value("${file.uploadDir}")
     String fileDir;
 
+
+    //@Autowired
+    // private UnitsInStockValidator unitsInStockValidator;
+
     @Autowired
     private BookValidator bookValidator; // BookValidator 인스턴스 선언
 
@@ -47,6 +51,14 @@ public class BookController {
         model.addAttribute("bookList", list);
         return "books";
     }
+	/*
+	@GetMapping("/all")
+	public String requestAllBooks(Model model) {
+		List<Book> list = bookService.getAllBookList();
+		model.addAttribute("bookList", list);
+		return "books";
+	}
+	*/
 
     @GetMapping("/all")
     public ModelAndView requestAllBooks() {
@@ -93,11 +105,14 @@ public class BookController {
         return "addBook";
     }
 
+
     @PostMapping("/add")
     public String submitAddNewBook(@Valid @ModelAttribute Book book,  BindingResult bindingResult) {
 
         if(bindingResult.hasErrors())
             return "addBook";
+
+
 
         MultipartFile bookImage = book.getBookImage();
 
@@ -114,12 +129,17 @@ public class BookController {
         book.setFileName(saveName);
         bookService.setNewBook(book);
 
+
+
+
         return "redirect:/books";
     }
+
 
     @GetMapping("/download")
     public void downloadBookImage(@RequestParam("file") String paramKey,
                                   HttpServletResponse response) throws IOException {
+
 
         if (paramKey == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -157,6 +177,9 @@ public class BookController {
                 "unitsInStock","totalPages", "releaseDate", "condition", "bookImage");
     }
 
+
+
+
     @ExceptionHandler(value={BookIdException.class})
     public ModelAndView handleError(HttpServletRequest req, BookIdException exception) {
         ModelAndView mav = new ModelAndView();
@@ -166,4 +189,36 @@ public class BookController {
         mav.setViewName("errorBook");
         return mav;
     }
+
+    @GetMapping("/update")
+    public String getUpdateBookForm(@ModelAttribute("updateBook") Book book, @RequestParam("id") String bookId, Model model) {
+        Book bookById = bookService.getBookById(bookId);
+        model.addAttribute("book", bookById);
+        return "updateForm";
+    }
+
+    @PostMapping("/update")
+    public String processUpdatewBookForm(@ModelAttribute("updateBook") Book book) {
+        MultipartFile bookImage = book.getBookImage();
+
+        //String rootDirectory = fileDir;
+        if (bookImage!=null && !bookImage.isEmpty()) {
+            try {
+                String fname = bookImage.getOriginalFilename();
+                bookImage.transferTo(new File(fileDir + fname));
+                book.setFileName(fname);
+            } catch (Exception e) {
+                throw new RuntimeException("Book Image saving failed", e);
+            }
+        }
+        bookService.setUpdateBook(book);
+        return "redirect:/books";
+    }
+
+    @RequestMapping(value = "/delete")
+    public String getDeleteBookForm(Model model, @RequestParam("id") String bookId) {
+        bookService.setDeleteBook(bookId);
+        return "redirect:/books";
+    }
+
 }

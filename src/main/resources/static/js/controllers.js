@@ -16,3 +16,8 @@ function deleteCart(cartId){
         document.deleteForm.submit();
         setTimeout('location.reload()', 10);
     }
+
+function deleteConfirm(id){
+    if (confirm("정말로 삭제하시겠습니까?") == true) location.href ="/BookMarket/books/delete?id="+id;
+    else  return;
+}
